@@ -4,25 +4,29 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import Game from "./game/page";
 import Settings from "./settings/page";
-import { levels } from "./lib/levels";
+import { cellCoords, settingsProps } from "./lib/types";
+import { createBackCells, createFrontCells } from "./lib/utils";
 
 export default function Home() {
   const [window, setWindow] = useState("menu");
-  const [level, setLevel] = useState("easy");
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<settingsProps>({
     level: "easy",
     width: 8,
     height: 8,
     cellsAmount: 64,
     bombsAmount: 10,
   });
-  const [frontCells, setFrontCells] = useState(new Set([]));
-  const [backCells, setBackCells] = useState([]);
+  const [frontCells, setFrontCells] = useState<Set<cellCoords>>(new Set())
+  const [backCells, setBackCells] = useState(() => createBackCells(settings))
+  const [gameState, setGameState] = useState<string>('play')
+  useEffect(() => {
+    setBackCells(() => createBackCells(settings))
+    setGameState('play')
+  }, [settings])
 
   useEffect(() => {
-    let currentSetting = levels.find(item => item.level === level)
-    setSettings(currentSetting!)
-  }, [level])
+    setFrontCells(() => createFrontCells(settings, backCells))
+  }, [ backCells ])
   return (
     <>
       {window === "menu" && (
@@ -52,9 +56,20 @@ export default function Home() {
         </ul>
       </div>
       )}
-      {window === "game" && <Game />}
+      {window === "game" && <Game {...{
+  setWindow,
+  frontCells,
+  setFrontCells,
+  backCells,
+  setBackCells,
+  settings,
+  gameState,
+  setGameState,
+  createBackCells,
+  createFrontCells,
+}}/>}
       {window === "settings" && (
-        <Settings {...{ level, setLevel, setWindow }} />
+        <Settings {...{ settings, setSettings, setWindow }} />
       )}
     </>
   );

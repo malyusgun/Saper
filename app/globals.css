@@ -65,3 +65,25 @@ h1,h2,h3,h4,h5,h6 {
 body {
   height: 100dvh;
 }
+@layer components {
+  .cell::before {
+    @apply content-[''] absolute top-0 left-0 w-[32px] h-[32px] -m-[4px] bg-blue-400 border-t-4 border-t-blue-200 border-l-4 border-l-blue-200 border-b-4 border-b-blue-600 border-r-4 border-r-blue-600 border-solid cursor-pointer
+  }
+  .cell::after {
+    display: hidden;
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 50;
+    /* background-image: url('/flag.png'); */
+    background-size: contain;
+  }
+  .arrow {
+    width: 60px;
+    height: 40px;
+    background-color: white;
+    clip-path: polygon(0 50%, 40% 0, 40% 30%, 100% 30%, 100% 70%, 40% 70%, 40% 100%);
+  }
+}

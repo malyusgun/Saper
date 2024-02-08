@@ -17,7 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={electrolize.className}>
-        <main className="w-full h-full flex items-center justify-between p-8 bg-gradient-to-br from-yellow-300 to-blue-300">
+        <main className="w-full h-full flex items-center justify-center p-8 bg-gradient-to-br from-yellow-300 to-blue-300">
           {children}
         </main>
       </body>
