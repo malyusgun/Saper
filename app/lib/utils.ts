@@ -111,6 +111,7 @@ function findFrontCell(cell: cellProps, frontCells: Set<cellCoords>) {
 }
 
 function openCell(
+  settings: settingsProps,
   setFrontCells: Dispatch<SetStateAction<Set<cellCoords>>>,
   cell: cellProps,
   backCells: cellProps[],
@@ -138,6 +139,7 @@ function openCell(
         if (!findFrontCell(cellItem, cellsNearby)) {
           // Если по этой ячейке ещё не проходили (иначе она лежит в 'cellsNearby')
           openCell(
+            settings,
             setFrontCells,
             cellItem,
             backCells,
@@ -148,8 +150,12 @@ function openCell(
       });
   }
   cell.opened = true
+  if (backCells.filter(cell => !cell.opened).length === settings.bombsAmount) {
+    // Если количество закрытых ячеек равно количеству бомб (все ячейки без бомб открыты)
+    setGameState("win")
+  }
   if (cell.bomb) {
-    // Если ячейка, по которой кликнули, содержит бомбу
+    // Если ячейка, по которой (!) кликнули, содержит бомбу
     setGameState("lose");
   }
 }

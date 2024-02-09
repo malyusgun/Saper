@@ -1,7 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 
 export interface GameProps {
-  setWindow: Dispatch<SetStateAction<string>>,
   frontCells: Set<cellCoords>,
   setFrontCells: Dispatch<SetStateAction<Set<cellCoords>>>,
   backCells: cellProps[],
@@ -11,6 +10,16 @@ export interface GameProps {
   setGameState: Dispatch<SetStateAction<string>>,
   createBackCells: (settings: settingsProps) => cellProps[],
   createFrontCells: (settings: settingsProps, backCells: cellProps[]) => Set<cellCoords>
+}
+export interface FieldProps {
+  frontCells: Set<cellCoords>,
+  setFrontCells: Dispatch<SetStateAction<Set<cellCoords>>>,
+  backCells: cellProps[],
+  settings: settingsProps,
+  gameState: string,
+  setGameState: Dispatch<SetStateAction<string>>,
+  flagsCount: flagsAmountProps,
+  setFlagsCount: Dispatch<SetStateAction<flagsAmountProps>>
 }
 export interface settingsProps {
   level: 'easy' | 'medium' | 'hard',
