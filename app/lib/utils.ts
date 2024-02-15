@@ -7,24 +7,19 @@ import {
 } from "./types";
 import { addNewRecord } from "./store/reducers/ResultsSlice";
 
-function shuffleArray(arr: cellProps[]) {
-  for (let i = arr.length - 1; i > -1; i--) {
-    let j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+function createGameCells(
+  settings: settingsProps = {
+    level: "easy",
+    theme: "green-blue",
+    width: 8,
+    height: 8,
+    cellsAmount: 64,
+    bombsAmount: 10,
   }
-  return arr;
-}
-
-function createGameCells(settings: settingsProps = {
-  level: 'easy',
-  width: 8,
-  height: 8,
-  cellsAmount: 64,
-  bombsAmount: 10,
-}) {
-
+) {
   let cells: cellProps[] = [];
-  for (let i = 0; i < settings.cellsAmount; i++) { // Заполняем массив дефолтными значениями ячеек
+  for (let i = 0; i < settings.cellsAmount; i++) {
+    // Заполняем массив дефолтными значениями ячеек
     cells.push({
       content: 0,
       x: 0,
@@ -55,22 +50,24 @@ function createGameCells(settings: settingsProps = {
       },
       setDefaultStatus() {
         if (!this.status[0].isActive) {
-          this.status.forEach(i => i.isActive = false)
-          this.status[0].isActive = true
+          this.status.forEach((i) => (i.isActive = false));
+          this.status[0].isActive = true;
         }
-      }
+      },
     });
   }
 
-  for (let i = 0; i < settings.bombsAmount; i++) { // Добавляем бомбы в начало массива
+  for (let i = 0; i < settings.bombsAmount; i++) {
+    // Добавляем бомбы в начало массива
     cells[i].bomb = true;
   }
 
   cells = shuffleArray(cells); // Перетасовываем бомбы в массиве
 
-  for (let i = 0; i < settings.cellsAmount; i++) { // Добавляем координаты
+  for (let i = 0; i < settings.cellsAmount; i++) {
+    // Добавляем координаты
     cells[i].x = i % settings.width;
-    cells[i].y = Math.floor(i / settings.width)
+    cells[i].y = Math.floor(i / settings.width);
   }
 
   cells = addContent(cells);
@@ -78,50 +75,126 @@ function createGameCells(settings: settingsProps = {
   return cells;
 }
 
-function middleButtonDown(cell: cellProps, gameCells: cellProps[],setGameState: Dispatch<SetStateAction<string>>, setWasClick: Dispatch<SetStateAction<boolean>>,flagsCount:flagsAmountProps,setFlagsCount:Dispatch<SetStateAction<flagsAmountProps>>) {
-  cell.timer = Date.now()
-  let neighboringCells:cellProps[] = findNeigboringCells(cell, gameCells)
-  neighboringCells.filter(cell => !cell.status[1].isActive)
-  neighboringCells.forEach(cell => cell.highlight = true)
-  addEventListener("mouseout", () => {
-    neighboringCells.forEach(cell => cell.highlight = false)
-  });
-  addEventListener("mouseup", () => {
-    let timeEnd = Date.now()
-    neighboringCells.forEach(cell => cell.highlight = false)
-    let bombsCountAround = neighboringCells.filter(cell => cell.bomb).length
-    let flagsCountAround = neighboringCells.filter(cell => cell.status[1].isActive).length
-    if (timeEnd - cell.timer < 1000 && bombsCountAround === flagsCountAround) {
-      neighboringCells.forEach(cell => {
-        if (!cell.status[1].isActive) {
-          cell.opened = true
-          cell.setDefaultStatus()
-        }
-        if (cell.bomb && !cell.status[1].isActive) {
-          setGameState("lose")
-          setWasClick(false)
-        }
-      })
-    }
-    const same = {...flagsCount} 
-    setFlagsCount(same)
-  });
-  const same = {...flagsCount} // Просто костыль для избавления от задержки, которая появляется при 
-  setFlagsCount(same)         // нажатии на ячейку, причину которой я так и не смог выяснить
+function shuffleArray(arr: cellProps[]) {
+  for (let i = arr.length - 1; i > -1; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
 }
 
-function findNeigboringCells(cell:cellProps, gameCells:cellProps[]) {
-  let cells:cellProps[] = []
+function increaseCells(
+  index: number,
+  setIndex: Dispatch<SetStateAction<number>>,
+  setCellsCount: Dispatch<SetStateAction<number>>,
+  allValues: number[]
+) {
+  if (index < 17) {
+    let newIndex = index;
+    newIndex++;
+    setIndex(newIndex);
+    setCellsCount(allValues[newIndex]);
+  }
+}
+
+function decreaseCells(
+  index: number,
+  setIndex: Dispatch<SetStateAction<number>>,
+  setCellsCount: Dispatch<SetStateAction<number>>,
+  allValues: number[]
+) {
+  if (index > 0) {
+    let newIndex = index;
+    newIndex--;
+    setIndex(newIndex);
+    setCellsCount(allValues[newIndex]);
+  }
+}
+
+function updateCustomSettings(
+  settingsCustom: settingsProps,
+  setSettingsCustom: Dispatch<SetStateAction<settingsProps>>,
+  cellsCount: number,
+  bombsCount: number,
+  setBombsCount: Dispatch<SetStateAction<number>>
+) {
+  let newSettings: settingsProps = {
+    level: "custom",
+    theme: settingsCustom.theme,
+    width: 8,
+    height: 8,
+    bombsAmount: 8,
+    cellsAmount: 8,
+  };
+  newSettings.bombsAmount = bombsCount;
+  newSettings.cellsAmount = cellsCount;
+  if (cellsCount < 64) newSettings.height = 4;
+  else if (cellsCount < 100) newSettings.height = 8;
+  else if (cellsCount < 144) newSettings.height = 10;
+  else if (cellsCount < 256) newSettings.height = 12;
+  else newSettings.height = 16;
+  newSettings.width = cellsCount / newSettings.height;
+  setSettingsCustom(newSettings);
+  if (
+    bombsCount < Math.floor(cellsCount / 8) ||
+    bombsCount > Math.ceil(cellsCount / 3)
+  )
+    setBombsCount(Math.floor(cellsCount / 8));
+}
+
+function middleButtonDown(
+  cell: cellProps,
+  gameCells: cellProps[],
+  setGameState: Dispatch<SetStateAction<string>>,
+  setWasClick: Dispatch<SetStateAction<boolean>>,
+  anchor: { value: number },
+  setAnchor: Dispatch<SetStateAction<{ value: number }>>
+) {
+  cell.timer = Date.now();
+  let neighboringCells: cellProps[] = findNeigboringCells(cell, gameCells);
+  neighboringCells.filter((cell) => !cell.status[1].isActive);
+  neighboringCells.forEach((cell) => (cell.highlight = true));
+  addEventListener("mouseout", () => {
+    neighboringCells.forEach((cell) => (cell.highlight = false));
+  });
+  addEventListener("mouseup", () => {
+    let timeEnd = Date.now();
+    neighboringCells.forEach((cell) => (cell.highlight = false));
+    let bombsCountAround = neighboringCells.filter((cell) => cell.bomb).length;
+    let flagsCountAround = neighboringCells.filter(
+      (cell) => cell.status[1].isActive
+    ).length;
+    if (timeEnd - cell.timer < 1000 && bombsCountAround === flagsCountAround) {
+      neighboringCells.forEach((cell) => {
+        if (!cell.status[1].isActive) {
+          cell.opened = true;
+          cell.setDefaultStatus();
+        }
+        if (cell.bomb && !cell.status[1].isActive) {
+          setGameState("lose");
+          setWasClick(false);
+        }
+      });
+    }
+    const same = { ...anchor };
+    setAnchor(same);
+  });
+  const same = { ...anchor }; // Просто костыль для избавления от задержки, которая появляется при
+  setAnchor(same); // нажатии на ячейку, причину которой я так и не смог выяснить
+}
+
+function findNeigboringCells(cell: cellProps, gameCells: cellProps[]) {
+  let cells: cellProps[] = [];
   gameCells.forEach((otherCell) => {
     if (
       Math.abs(otherCell.x - cell.x) <= 1 &&
       Math.abs(otherCell.y - cell.y) <= 1 &&
       (otherCell.x !== cell.x || otherCell.y !== cell.y)
     ) {
-      cells.push(otherCell)
+      cells.push(otherCell);
     }
   });
-  return cells
+  return cells;
 }
 
 function addContent(cells: cellProps[]) {
@@ -151,11 +224,11 @@ function findCell(cell: cellProps, cells: Set<cellCoords>) {
   cells.size &&
     cells.forEach((item) => {
       if (item.x === cell.x && item.y === cell.y) target = item;
-    });            
-  return target;   
-}                  
+    });
+  return target;
+}
 
-function openCell( 
+function openCell(
   settings: settingsProps,
   cell: cellProps,
   gameCells: cellProps[],
@@ -164,26 +237,29 @@ function openCell(
   cellsNearby: Set<cellCoords>,
   dispatch: any,
   timer: number,
-  wasClick:boolean,
+  wasClick: boolean,
   setWasClick: Dispatch<SetStateAction<boolean>>,
-  flagsCount:flagsAmountProps,
-  setFlagsCount: Dispatch<SetStateAction<flagsAmountProps>>,
+  anchor: { value: number },
+  setAnchor: Dispatch<SetStateAction<{ value: number }>>
 ) {
   if (!wasClick && cell.bomb) {
-    let copy = [...gameCells]
-    let indexCur = gameCells.indexOf(cell)
-    let indexWithoutBomb = gameCells.findIndex(cell => !cell.bomb);
-    [copy[indexCur],copy[indexWithoutBomb]] = [copy[indexWithoutBomb],copy[indexCur]]
+    let copy = [...gameCells];
+    let indexCur = gameCells.indexOf(cell);
+    let indexWithoutBomb = gameCells.findIndex((cell) => !cell.bomb);
+    [copy[indexCur], copy[indexWithoutBomb]] = [
+      copy[indexWithoutBomb],
+      copy[indexCur],
+    ];
     for (let i = 0; i < settings.cellsAmount; i++) {
       copy[i].x = i % settings.width;
-      copy[i].y = Math.floor(i / settings.width)
+      copy[i].y = Math.floor(i / settings.width);
     }
-    copy = addContent(copy); 
-    setGameCells(copy)
-    cell = copy[indexCur]
-    setWasClick(true)
-  } 
-  setWasClick(true)
+    copy = addContent(copy);
+    setGameCells(copy);
+    cell = copy[indexCur];
+    setWasClick(true);
+  }
+  setWasClick(true);
   cellsNearby.add({ x: cell.x, y: cell.y }); // Добавляем ячейку в коллекцию ячеек квадрата 3 на 3, центром которого является ячейка, по которой кликнули
   if (!cell.content && !cell.bomb) {
     // Если сама ячейка и (!) её соседние ячейки (content === 0) не содержат бомб
@@ -209,28 +285,30 @@ function openCell(
             timer,
             wasClick,
             setWasClick,
-            flagsCount,
-            setFlagsCount,
+            anchor,
+            setAnchor
           );
         }
       });
   }
 
-  cell.opened = true
-  cell.setDefaultStatus()
-  if (gameCells.filter(cell => !cell.opened).length === settings.bombsAmount) {
+  cell.opened = true;
+  cell.setDefaultStatus();
+  if (
+    gameCells.filter((cell) => !cell.opened).length === settings.bombsAmount
+  ) {
     // Если количество закрытых ячеек равно количеству бомб (все ячейки без бомб открыты)
-    setGameState("win")
-    setWasClick(false)
-    dispatch(addNewRecord({timer}))
+    setGameState("win");
+    setWasClick(false);
+    settings.level !== "custom" ? dispatch(addNewRecord({ timer })) : "";
   }
   if (cell.bomb) {
     // Если ячейка, по которой (!) кликнули, содержит бомбу
     setGameState("lose");
-    setWasClick(false)
+    setWasClick(false);
   }
-  const same = {...flagsCount} // Просто костыль для избавления от задержки, которая появляется при 
-  setFlagsCount(same)         // нажатии на ячейку, причину которой я так и не смог выяснить
+  const same = { ...anchor }; // Просто костыль для избавления от задержки, которая появляется при
+  setAnchor(same); // нажатии на ячейку, причину которой я так и не смог выяснить
 }
 
 function updateStatus(
@@ -263,15 +341,19 @@ function updateStatus(
     newState.withBomb === settings.bombsAmount
   ) {
     setGameState("win");
-    setWasClick(false)
-    dispatch(addNewRecord({timer}))
+    setWasClick(false);
+    settings.level !== "custom" ? dispatch(addNewRecord({ timer })) : "";
   }
   setFlagsCount(newState); //! ИМЕННО ЭТА СТРОКА! Если именно её закомментировать - смена статуса правой кнопкой мыши обретёт задержку (которая была при openCell, middleButtonDown и middleButtonUp)
 } // (понимаю, что дёргаю компонент Game, но как это связано с задержкой - не знаю)
+
 export {
   createGameCells,
   updateStatus,
   openCell,
   middleButtonDown,
   findCell,
+  increaseCells,
+  decreaseCells,
+  updateCustomSettings,
 };

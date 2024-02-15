@@ -15,16 +15,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <html lang="en">
-        <body className={electrolize.className}>
-          <StoreProvider>
-            <main className="w-full h-full flex items-center justify-center max-sm:p-4 p-8 bg-gradient-to-br from-green-300 to-blue-400">
-              {children}
-            </main>
-          </StoreProvider>
-        </body>
+      <body className={electrolize.className}>
+        <StoreProvider>{children}</StoreProvider>
+      </body>
     </html>
   );
 }

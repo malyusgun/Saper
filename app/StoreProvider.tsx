@@ -16,6 +16,7 @@ export default function StoreProvider({
     initResults(results)
     initSettings({
       level: 'easy',
+      theme: 'green-blue',
       width: 8,
       height: 8,
       cellsAmount: 64,

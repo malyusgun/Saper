@@ -72,6 +72,9 @@ const ResultsSlice = createSlice({
         case "hard":
           state.level = "hard";
           changeResults(state.results[state.level as keyof typeof state.results], "hard");
+          case "custom":
+            state.level = "custom";
+            changeResults(state.results[state.level as keyof typeof state.results], "custom");
           break;
       }
     },

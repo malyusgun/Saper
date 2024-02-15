@@ -14,7 +14,7 @@ const Field: React.FC<FieldProps> = ({
   setFlagsCount,
   timer,
   wasClick,
-  setWasClick,
+  setWasClick,anchor, setAnchor
 }) => {
   let cellsNearby: Set<cellCoords>;
   const dispatch = useAppDispatch();
@@ -60,8 +60,8 @@ const Field: React.FC<FieldProps> = ({
                   timer,
                   wasClick,
                   setWasClick,
-                  flagsCount,
-                  setFlagsCount
+                  anchor,
+                  setAnchor
                 );
             } else if (e.button === 1)
               middleButtonDown(
@@ -69,8 +69,8 @@ const Field: React.FC<FieldProps> = ({
                 gameCells,
                 setGameState,
                 setWasClick,
-                flagsCount,
-                setFlagsCount
+                anchor,
+                setAnchor
               );
           }}
           onContextMenu={(e) => {

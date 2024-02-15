@@ -19,11 +19,13 @@ const Game: React.FC<GameComponentProps> = ({
   gameState,
   setGameState,
   createGameCells,
+  isDisabledResults
 }) => {
   const settingsInfo = getSettings();
   const field = useRef<HTMLDivElement>(null);
   const [timer, setTimer] = useState<number>(0);
   const [wasClick, setWasClick] = useState<boolean>(false);
+  const [anchor, setAnchor] = useState<{value:number}>({value:5})
   let timerId = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
@@ -36,7 +38,6 @@ const Game: React.FC<GameComponentProps> = ({
       });
     }
     return () => {
-      setTimer(0);
       clearInterval(timerId.current!);
     };
   }, [gameState]);
@@ -48,13 +49,15 @@ const Game: React.FC<GameComponentProps> = ({
     if (window.screen.width < 768) px = 14;
     field.current!.style.width = `${px * settings.width}px`;
     field.current!.style.height = `${px * settings.height}px`;
-  }, [createGameCells, setGameCells, setSettings, settings]);
+  }, [createGameCells, setGameCells, setSettings, settings]); // в DevTools/Toogle Device Toolbar поле ломается, но при смене настроек перестраивается правильно (window.screen.width в зависимостях выдаёт предупреждение)
 
   const [flagsCount, setFlagsCount] = useState<flagsAmountProps>({
     withBomb: 0,
     all: 0,
   });
-
+  useEffect(() => {
+    setGameState("play");
+  },[setGameState])
   const rebuildField = () => {
     setTimer(0);
     clearInterval(timerId.current!);
@@ -79,13 +82,16 @@ const Game: React.FC<GameComponentProps> = ({
             "from-green-400 to-green-600": settingsInfo.level === "easy",
             "from-yellow-200 to-yellow-400": settingsInfo.level === "medium",
             "from-red-400 to-red-600": settingsInfo.level === "hard",
+            "from-purple-600 to-purple-900": settingsInfo.level === "custom",
           }
         )}
       >
         <div className="relative mx-auto" key={Math.random()}>
           {
             <>
-              <div className="absolute max-md:w-12 max-lg:w-16 w-20 top-0 left-0 bg-black text-red-600 max-md:text-xs max-lg:text-sm text-xl font-bold text-center py-1">
+              <div className={clsx("absolute max-md:w-12 max-lg:w-16 w-20 top-0 left-0 bg-black text-red-600 max-md:text-xs max-lg:text-sm text-xl font-bold text-center py-1",{
+                "-top-6 md:-top-8 left-1/2 right-1/2 -translate-x-1/2": settings.width < 8
+              })}>
                 <span className="bg-black max-sm:w-2 mx-[1px] md:mx-[2px] max-lg:w-2 w-3 inline-block">
                   {Math.floor(timer / 600)}
                 </span>
@@ -102,7 +108,9 @@ const Game: React.FC<GameComponentProps> = ({
                   {Math.floor(timer % 10)}
                 </span>
               </div>
-              <div className="max-md:w-6 max-md:h-6 max-lg:w-10 max-lg:h-10 w-12 h-12 mx-auto max-md:mb-2 max-lg:mb-3 mb-4 max-md:border-[1px] border-2 border-solid border-slate-500 bg-yellow-200 flex justify-center items-center">
+              <div className={clsx("max-md:w-6 max-md:h-6 max-lg:w-10 max-lg:h-10 w-12 h-12 mx-auto max-md:mb-2 max-lg:mb-3 mb-4 max-md:border-[1px] border-2 border-solid border-slate-500 bg-yellow-200 flex justify-center items-center", {
+                "mt-1 mb-1": settings.width < 8
+              })}>
                 {gameState === "play" ? (
                   <CiFaceSmile
                     className="max-md:w-5 max-md:h-5 max-lg:w-8 max-lg:h-8 w-10 h-10 m-auto cursor-pointer"
@@ -115,14 +123,16 @@ const Game: React.FC<GameComponentProps> = ({
                   />
                 ) : gameState === "win" ? (
                   <CgSmileMouthOpen
-                    className="max-md:w-5 max-md:h-5 max-md:w-8 max-md:h-8 w-10 h-10 m-auto cursor-pointer"
+                    className="max-md:w-5 max-md:h-5 max-lg:w-8 max-lg:h-8 w-10 h-10 m-auto cursor-pointer"
                     onMouseDown={rebuildField}
                   />
                 ) : (
                   ""
                 )}
               </div>
-              <div className="absolute w-8 md:w-12 lg:w-16 z-10 top-0 right-1 bg-black text-red-600 p-[2px] max-md:text-sm max-lg:text-xl text-3xl font-bold text-center">
+              <div className={clsx("absolute w-8 md:w-12 lg:w-16 z-10 top-0 right-1 bg-black text-red-600 p-[2px] max-md:text-sm max-lg:text-xl text-3xl font-bold text-center", {
+                "hidden": settings.width < 8
+              })}>
                 {settings.bombsAmount -
                   gameCells.filter((cell) => cell.status[1].isActive).length}
               </div>
@@ -139,19 +149,25 @@ const Game: React.FC<GameComponentProps> = ({
               setFlagsCount,
               timer,
               wasClick,
-              setWasClick,
+              setWasClick,anchor, setAnchor
             }}
           />
         </div>
       </div>
       <Link
-        className="absolute inline-block w-40 -z-10 h-16 p-2 pb-4 bg-blue-500 text-white text-base font-bold flex justify-center items-start border-solid border-white border-4 rounded-xl -top-10 left-1/2 -translate-x-1/2 hover:-top-12 transition-all duration-300"
+        className={clsx("absolute w-40 -z-10 h-16 p-2 pb-4 bg-blue-500 text-white text-base font-bold flex justify-center items-start border-solid border-white border-4 rounded-xl -top-10 left-1/2 -translate-x-1/2 hover:-top-12 transition-all duration-300",{
+          "bg-blue-800 text-slate-400 cursor-not-allowed pointer-events-none": isDisabledResults,
+          "hidden": settings.width < 8
+        })}
         href={"/statistic"}
       >
         Таблица лидеров
       </Link>
       <button
-        className="absolute inline-block w-40 -z-10 h-16 p-2 pt-4 bg-blue-500 text-white text-base font-bold flex justify-center items-end border-solid border-white border-4 rounded-xl -bottom-10 left-1/2 -translate-x-1/2 hover:-bottom-12 transition-all duration-300"
+        className={clsx("absolute -z-10 h-16 p-2 pt-4 bg-blue-500 text-white text-base font-bold flex justify-center items-end border-solid border-white border-4 rounded-xl -bottom-10 left-1/2 -translate-x-1/2 hover:-bottom-12 transition-all duration-300", {
+          "w-40": settings.width >= 8,
+          "text-sm w-24": settings.width < 8
+        })}
         onClick={() => setWindow("settings")}
       >
         Настройки
