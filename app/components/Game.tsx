@@ -88,8 +88,9 @@ const Game: React.FC<GameComponentProps> = ({
         <div className="relative mx-auto" key={Math.random()}>
           {
             <>
-              <div className={clsx("absolute max-md:w-12 max-lg:w-16 w-20 top-0 left-0 bg-black text-red-600 max-md:text-xs max-lg:text-sm text-xl font-bold text-center py-1",{
-                "-top-6 md:-top-8 left-1/2 right-1/2 -translate-x-1/2": settings.width < 8
+              <div className={clsx("absolute max-md:w-12 max-lg:w-16 w-20 bg-black text-red-600 max-md:text-xs max-lg:text-sm text-xl font-bold text-center py-1",{
+                "-top-6 md:-top-8 left-1/2 right-1/2 -translate-x-1/2": settings.width < 8,
+                "top-0 left-0": settings.width >= 8
               })}>
                 <span className="bg-black max-sm:w-2 mx-[1px] md:mx-[2px] max-lg:w-2 w-3 inline-block">
                   {Math.floor(timer / 600)}
