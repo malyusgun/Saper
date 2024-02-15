@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "deploy": "gh-pages -d saper-test",
+    "deploy": "gh-pages -d build",
     "start": "next start",
     "lint": "next lint"
   },
