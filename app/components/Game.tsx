@@ -21,7 +21,6 @@ const Game: React.FC<GameComponentProps> = ({
   createGameCells,
   isDisabledResults
 }) => {
-  const settingsInfo = getSettings();
   const field = useRef<HTMLDivElement>(null);
   const [timer, setTimer] = useState<number>(0);
   const [wasClick, setWasClick] = useState<boolean>(false);
@@ -79,10 +78,10 @@ const Game: React.FC<GameComponentProps> = ({
         className={clsx(
           "max-md:p-4 max-md:pt-5 max-md:pb-10 p-8 pt-10 pb-20 box-content bg-gradient-to-br border-4 border-solid border-white rounded-lg",
           {
-            "from-green-400 to-green-600": settingsInfo.level === "easy",
-            "from-yellow-200 to-yellow-400": settingsInfo.level === "medium",
-            "from-red-400 to-red-600": settingsInfo.level === "hard",
-            "from-purple-600 to-purple-900": settingsInfo.level === "custom",
+            "from-green-400 to-green-600": settings.level === "easy",
+            "from-yellow-200 to-yellow-400": settings.level === "medium",
+            "from-red-400 to-red-600": settings.level === "hard",
+            "from-purple-600 to-purple-900": settings.level === "custom",
           }
         )}
       >
@@ -155,7 +154,7 @@ const Game: React.FC<GameComponentProps> = ({
         </div>
       </div>
       <Link
-        className={clsx("absolute w-40 -z-10 h-16 p-2 pb-4 bg-blue-500 text-white text-base font-bold flex justify-center items-start border-solid border-white border-4 rounded-xl -top-10 left-1/2 -translate-x-1/2 hover:-top-12 transition-all duration-300",{
+        className={clsx("absolute w-40 -z-10 h-16 p-1 pb-4 bg-blue-500 text-white text-base font-bold flex justify-center items-start border-solid border-white border-4 rounded-xl -top-10 left-1/2 -translate-x-1/2 hover:-top-12 transition-all duration-300",{
           "bg-blue-800 text-slate-400 cursor-not-allowed pointer-events-none": isDisabledResults,
           "hidden": settings.width < 8
         })}
@@ -164,7 +163,7 @@ const Game: React.FC<GameComponentProps> = ({
         Таблица лидеров
       </Link>
       <button
-        className={clsx("absolute -z-10 h-16 p-2 pt-4 bg-blue-500 text-white text-base font-bold flex justify-center items-end border-solid border-white border-4 rounded-xl -bottom-10 left-1/2 -translate-x-1/2 hover:-bottom-12 transition-all duration-300", {
+        className={clsx("absolute -z-10 h-16 p-1 pt-4 bg-blue-500 text-white text-base font-bold flex justify-center items-end border-solid border-white border-4 rounded-xl -bottom-10 left-1/2 -translate-x-1/2 hover:-bottom-12 transition-all duration-300", {
           "w-40": settings.width >= 8,
           "text-sm w-24": settings.width < 8
         })}

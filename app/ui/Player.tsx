@@ -3,7 +3,7 @@ import clsx from "clsx"
 const Player:React.FC<{ name: string, time: string, key: number, index: number}> = ({name, time, index}) => {
   return (
     <tr>
-      <td className={clsx("p-4 border-2 border-solid border-black-500 w-full h-8 bg-white text-xl flex justify-between items-center text-purple-700", {
+      <td className={clsx("p-4 border-2 border-solid border-black-500 w-full h-8 bg-white max-sm:text-base text-xl flex justify-between items-center text-purple-700", {
         "border-b-0": index !== 9,
         "text-red-700": name == 'Вы'
       })}>

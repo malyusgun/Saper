@@ -31,7 +31,7 @@ export default function Page() {
     })}>
       <div className="relative z-10 select-none" onContextMenu={(e) => e.preventDefault()}>
         <div className="max-sm:w-[280px] w-[400px] mx-auto bg-blue-500 border-4 border-white border-solid rounded-lg">
-          <h1 className="mt-2 mb-4 text-center text-white font-bold text-3xl">
+          <h1 className="mt-3 max-sm:mb-2 mb-4 max-sm:text-xl text-center text-white font-bold text-3xl">
             Таблица лидеров
           </h1>
           <table className="border-collapse w-full border-2 border-solid border-blue-500">

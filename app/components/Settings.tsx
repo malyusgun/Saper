@@ -59,7 +59,7 @@ const Settings: React.FC<SettingsComponentProps> = ({
         onClick={() => setWindow("settingsCustom")}
         className="relative inline-block text-blue-600 hover:text-blue-900 max-sm:-m-1 -m-2 max-sm:text-lg text-xl font-bold mr-2"
       >
-        <button className="max-sm:p-1 p-2 underline">Свои настройки</button>
+        <button className="p-2 underline max-sm:text-sm">Свои настройки</button>
       </div>
       <button className="w-10 h-10 max-sm:w-7 max-sm:h-7 bg-gradient-to-br from-green-300 to-blue-400 border-2 border-solid border-blue-500 max-sm:mx-1 mx-2" onClick={() => setSettings(changeTheme('green-blue'))}></button>
       <button className="w-10 h-10 max-sm:w-7 max-sm:h-7 bg-gradient-to-br from-yellow-300 to-blue-400 border-2 border-solid border-blue-500 max-sm:mr-1 mr-2" onClick={() => setSettings(changeTheme('yellow-blue'))}></button>

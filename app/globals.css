@@ -70,9 +70,6 @@ body {
     @apply content-[''] absolute top-0 left-0 w-[14px] h-[14px] -m-[1px] border-[1px] md:w-[20px] md:h-[20px] md:-m-[2px] md:border-2 lg:w-[28px] lg:h-[28px] lg:-m-[3px] lg:border-[3px] xl:w-[32px] xl:h-[32px] xl:-m-[4px] xl:border-4 bg-blue-400 border-t-blue-200 border-l-blue-200 border-b-blue-600 border-r-blue-600 border-solid cursor-pointer
   }
   .cell::after {
-    display: hidden;
-    width: 24px;
-    height: 24px;
     position: absolute;
     top: 0;
     left: 0;
