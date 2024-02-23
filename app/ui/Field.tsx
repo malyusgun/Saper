@@ -23,7 +23,7 @@ const Field: React.FC<FieldProps> = ({
       {gameCells.map((cell) => (
         <div
           className={clsx(
-            `cell relative inline-block w-[14px] h-[14px] border-[1px] md:w-[20px] md:h-[20px] md:border-2 lg:w-[28px] lg:h-[28px] lg:border-[3px] xl:w-[32px] xl:h-[32px] xl:border-4 bg-gradient-to-br from-gray-50 to-gray-400 border-slate-500 border-t-slate-200 border-l-slate-200 border-solid text-center text-xs md:text-sm lg:text-base xl:text-base font-bold select-none after:w-[12px] after:h-[12px] md:after:w-[16px] md:after:h-[16px] lg:after:w-[20px] lg:after:h-[20px] lg:after:w-[24px] lg:after:h-[24px]`,
+            `cell relative inline-block w-[14px] h-[14px] border-[1px] md:w-[20px] md:h-[20px] md:border-2 lg:w-[28px] lg:h-[28px] lg:border-[3px] xl:w-[32px] xl:h-[32px] xl:border-4 bg-gradient-to-br from-gray-50 to-gray-400 border-slate-500 border-t-slate-200 border-l-slate-200 border-solid text-center text-xs md:text-sm lg:text-base xl:text-base font-bold select-none after:w-[12px] after:h-[12px] md:after:w-[16px] md:after:h-[16px] lg:after:w-[20px] lg:after:h-[20px]`,
             {
               "before:hidden": cell.opened,
               "before:opacity-50": cell.highlight,
