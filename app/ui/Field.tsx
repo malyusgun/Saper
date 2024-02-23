@@ -31,9 +31,9 @@ const Field: React.FC<FieldProps> = ({
               "after:hidden": cell.status.find((i) => i.isActive)?.status === "none",
               "cursor-default after:block":
                 cell.status.find((i) => i.isActive)?.status !== "none",
-              "after:bg-[url('flag.png')]":
+              "after:bg-[url('./flag.png')]":
                 cell.status.find((i) => i.isActive)?.status === "flag",
-              "after:bg-[url('unknown.png')]":
+              "after:bg-[url('./unknown.png')]":
                 cell.status.find((i) => i.isActive)?.status === "unknown",
               "text-transparent": cell.content === 0,
               "text-blue-500": cell.content === 1,
