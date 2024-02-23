@@ -8,7 +8,6 @@ import { CiFaceSmile } from "react-icons/ci";
 import clsx from "clsx";
 import { GameComponentProps, flagsAmountProps } from "../lib/types";
 import Link from "next/link";
-import { getSettings } from "../lib/store/localstorage";
 
 const Game: React.FC<GameComponentProps> = ({
   setWindow,
@@ -108,6 +107,7 @@ const Game: React.FC<GameComponentProps> = ({
                   {Math.floor(timer % 10)}
                 </span>
               </div>
+              
               <div className={clsx("max-md:w-6 max-md:h-6 max-lg:w-10 max-lg:h-10 w-12 h-12 mx-auto max-md:mb-2 max-lg:mb-3 mb-4 max-md:border-[1px] border-2 border-solid border-slate-500 bg-yellow-200 flex justify-center items-center", {
                 "mt-1 mb-1": settings.width < 8
               })}>
